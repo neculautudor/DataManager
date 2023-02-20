@@ -21,3 +21,10 @@ def get_client_employees(client):
 
 def get_employee_clients(employee):
 	return [employee[0] for employee in db.get_employee_clients(employee)]
+
+def get_employee_payments(id):
+	payments = db.get_employee_payments_by_id(id)
+	dict_payments = {}
+	for payment in payments:
+		dict_payments[payment[0]] = payment[1]
+	return dict_payments

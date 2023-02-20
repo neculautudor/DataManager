@@ -136,3 +136,6 @@ class Database(object):
 		return self.cursor.execute(
 			"SELECT * FROM plata_angajat WHERE nume_angajat = '%s' AND data >= '%s' AND data <= '%s' ORDER BY data DESC" % (employee, date1, date2)
 		).fetchall()
+
+	def get_employee_payments_by_id(self, id):
+		return self.cursor.execute(f"SELECT nume_angajat, suma FROM plata_angajat WHERE id = '{id}'").fetchall()

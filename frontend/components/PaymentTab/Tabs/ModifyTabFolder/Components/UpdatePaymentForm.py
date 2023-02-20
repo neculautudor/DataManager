@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import QWidget, QCheckBox, QFormLayout, QLineEdit, QDateEdi
     QVBoxLayout
 
 from data_types import UpdateClientPaymentData, UpdateEmployeePaymentData
-from frontend.DataFetching.get_data import get_client_employees
+from frontend.DataFetching.get_data import get_client_employees, get_employee_payments
 from frontend.components.Root.UpdateHandler import updateHandler
 
 
@@ -26,10 +26,10 @@ class FormUpdatePayment(QWidget):
 		self.observations = QLineEdit(self)
 		self.amount_field = QLineEdit(self)
 		self.amount_field.setValidator(QDoubleValidator())
+		self.amount_field.setText(str(self.data[2]))
 		self.date_field = QDateEdit(self)
 		self.date_field.setCalendarPopup(True)
 		self.date_field.setDate(datetime.strptime(self.data[3], '%Y-%m-%d').date() if is_client else datetime.strptime(self.data[4], '%Y-%m-%d').date())
-		print(datetime.strptime(self.data[3], '%Y-%m-%d').date() if is_client else datetime.strptime(self.data[4], '%Y-%m-%d').date(), date.today())
 
 		self.layout.addRow('Client: ', QLabel(str(data[1])))
 		self.layout.addRow('Suma: ', self.amount_field)
@@ -38,7 +38,6 @@ class FormUpdatePayment(QWidget):
 		self.layout.addRow('Observatii: ', self.observations)
 		if self.is_client:
 			self.layout.addRow('Impartire: ', self.split_field)
-
 		updateHandler.add_object(self)
 
 	def get_data(self):
@@ -66,6 +65,7 @@ class FormUpdatePayment(QWidget):
 		)
 
 	def employee_split(self):
+		employee_payments = get_employee_payments(self.data[0])
 		scroll = QScrollArea()
 		connections = QWidget()
 		layout = QVBoxLayout()
@@ -75,6 +75,8 @@ class FormUpdatePayment(QWidget):
 			employee_layout.addWidget(QLabel(employee))
 			specific_employee_sum = QLineEdit()
 			specific_employee_sum.setValidator(QDoubleValidator())
+			if employee in employee_payments.keys():
+				specific_employee_sum.setText(str(employee_payments[employee]))
 			self.split_fields[employee] = specific_employee_sum
 			employee_layout.addWidget(specific_employee_sum)
 			employee_field.setLayout(employee_layout)
